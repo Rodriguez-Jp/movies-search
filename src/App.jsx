@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { useSearch } from "./hooks/useSearch";
 
 function App() {
-  const { movies, hasMovies } = useMovies();
+  const { movies, hasMovies, getMovies } = useMovies();
   const { query, setQuery, error } = useSearch();
 
   const handleChange = (e) => {
@@ -13,8 +13,9 @@ function App() {
     setQuery(e.target.value);
   };
 
-  const handleSubmit = () => {
-    console.log(query);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    getMovies(query);
   };
 
   return (
@@ -38,7 +39,7 @@ function App() {
         </form>
         {error && <p className="text-red-500 text-xl text-center">{error}</p>}
       </header>
-      <main className="w-full flex justify-center mt-4 text-white">
+      <main className="max-w-4xl flex justify-center mt-4 text-white mx-auto">
         {hasMovies ? <MoviesResult movies={movies} /> : <MoviesNoResult />}
       </main>
     </>
