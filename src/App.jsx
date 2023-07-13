@@ -1,22 +1,25 @@
 import MoviesResult from "./components/MoviesResult";
 import MoviesNoResult from "./components/MoviesNoResult";
 import { useMovies } from "./hooks/useMovies";
-import { useEffect, useState } from "react";
 import { useSearch } from "./hooks/useSearch";
+import "./spinner.css";
 
 function App() {
-  const { movies, hasMovies, getMovies } = useMovies();
   const { query, setQuery, error } = useSearch();
+  const { movies, getMovies, loading } = useMovies({ query });
 
   const handleChange = (e) => {
     e.preventDefault();
-    setQuery(e.target.value);
+    const newQuery = e.target.value;
+    setQuery(newQuery);
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    getMovies(query);
+    getMovies();
   };
+
+  console.log(movies);
 
   return (
     <>
@@ -33,14 +36,22 @@ function App() {
             <input
               type="submit"
               value="Search"
-              className="p-1 border border-gray-400 text-white rounded-lg"
+              className="p-1 border border-gray-400 text-white rounded-lg hover:bg-white hover:text-black cursor-pointer hover:scale-110 transition-transform"
             />
           </div>
         </form>
         {error && <p className="text-red-500 text-xl text-center">{error}</p>}
       </header>
       <main className="max-w-4xl flex justify-center mt-4 text-white mx-auto">
-        {hasMovies ? <MoviesResult movies={movies} /> : <MoviesNoResult />}
+        {!(typeof movies === "string") ? (
+          !loading ? (
+            <MoviesResult movies={movies} />
+          ) : (
+            <span className="loader"></span>
+          )
+        ) : (
+          <MoviesNoResult />
+        )}
       </main>
     </>
   );
