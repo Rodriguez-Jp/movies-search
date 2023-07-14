@@ -1,6 +1,8 @@
 import MoviesResult from "./components/MoviesResult";
 import MoviesNoResult from "./components/MoviesNoResult";
+import debounce from "just-debounce-it";
 import { useMovies } from "./hooks/useMovies";
+import { useCallback } from "react";
 import { useSearch } from "./hooks/useSearch";
 import "./spinner.css";
 
@@ -8,18 +10,27 @@ function App() {
   const { query, setQuery, error } = useSearch();
   const { movies, getMovies, loading } = useMovies({ query });
 
+  const debouncedMovies = useCallback(
+    debounce(({ query }) => {
+      getMovies({ query });
+      console.log({ query });
+    }, 2000),
+    [getMovies]
+  );
+
+  const debounceTest = debounce(() => console.log("Hola"), 500);
+
   const handleChange = (e) => {
     e.preventDefault();
     const newQuery = e.target.value;
     setQuery(newQuery);
+    debouncedMovies({ query: newQuery });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     getMovies();
   };
-
-  console.log(movies);
 
   return (
     <>

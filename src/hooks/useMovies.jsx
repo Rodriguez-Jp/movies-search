@@ -8,7 +8,7 @@ export function useMovies({ query }) {
   const [loading, setLoading] = useState(false);
   const previousSearch = useRef(query);
 
-  const getMovies = async () => {
+  const getMovies = async ({ query }) => {
     if (previousSearch.current === query) return;
     try {
       setLoading(true);
